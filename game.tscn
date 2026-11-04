@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://b0oqvrjwrjmqf"]
+
+[ext_resource type="Script" uid="uid://8r7xwbka1b2a" path="res://game.gd" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://p58od5dtotvl" path="res://cosmic_background.gd" id="2_e2o6t"]
+[ext_resource type="AudioStream" uid="uid://b5ul46pydjmvk" path="res://bling.wav" id="3_fc0e3"]
+[ext_resource type="AudioStream" uid="uid://c8r2h5412h5lc" path="res://stomp.wav" id="4_7jktm"]
+
+[node name="Game" type="Control" unique_id=565248909]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_80nbo")
+
+[node name="CosmicBackground" type="ColorRect" parent="." unique_id=1989767084]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.019607844, 0.03137255, 0.09019608, 1)
+script = ExtResource("2_e2o6t")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1541883836]
+stream = ExtResource("3_fc0e3")
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="." unique_id=1391276636]
+stream = ExtResource("4_7jktm")
