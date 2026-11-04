@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Draw!"
+config/name="Draw! (Final)"
 config/version="1.0"
 run/main_scene="res://game.tscn"
 config/features=PackedStringArray("4.7", "Mobile")

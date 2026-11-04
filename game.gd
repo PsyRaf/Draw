@@ -57,6 +57,7 @@ var sound_manager: Node
 var pause_button: Button
 var pause_panel: PanelContainer
 var resume_button: Button
+var restart_button: Button
 var pause_menu_button: Button
 var pause_quit_button: Button
 var is_paused: bool = false
@@ -64,6 +65,7 @@ var is_paused: bool = false
 
 func _ready() -> void:
 	randomize()
+	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	bgm_player = AudioStreamPlayer.new()
 	bgm_player.name = "BGMPlayer"
@@ -77,6 +79,7 @@ func _ready() -> void:
 	if background:
 		background.z_index = -10
 		background.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		background.process_mode = Node.PROCESS_MODE_ALWAYS
 
 	sound_manager = preload("res://SoundManager.gd").new()
 	sound_manager.name = "SoundManager"
@@ -106,6 +109,7 @@ func _ready() -> void:
 func create_menu() -> void:
 	menu_panel = PanelContainer.new()
 	menu_panel.name = "MainMenu"
+	menu_panel.process_mode = Node.PROCESS_MODE_ALWAYS
 	menu_panel.custom_minimum_size = Vector2(340, 420)
 	menu_panel.anchor_left = 0.5
 	menu_panel.anchor_top = 0.5
@@ -226,24 +230,16 @@ func create_menu() -> void:
 
 	# --- IN-GAME PAUSE BUTTON ---
 	pause_button = create_scifi_button("II", Color(0.0, 0.9, 1.0))
-	pause_button.custom_minimum_size = Vector2(44, 44)
-	pause_button.anchor_left = 0.5
-	pause_button.anchor_top = 0.5
-	pause_button.anchor_right = 0.5
-	pause_button.anchor_bottom = 0.5
-	pause_button.offset_left = -22
-	pause_button.offset_top = -22
-	pause_button.offset_right = 22
-	pause_button.offset_bottom = 22
-	# Reposition to top-right corner of the middle dividing area
+	pause_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_button.custom_minimum_size = Vector2(56, 56)
 	pause_button.anchor_left = 1.0
 	pause_button.anchor_top = 0.5
 	pause_button.anchor_right = 1.0
 	pause_button.anchor_bottom = 0.5
-	pause_button.offset_left = -60
-	pause_button.offset_top = -22
-	pause_button.offset_right = -15
-	pause_button.offset_bottom = 22
+	pause_button.offset_left = -72
+	pause_button.offset_top = -28
+	pause_button.offset_right = -16
+	pause_button.offset_bottom = 28
 	pause_button.z_index = 15
 	pause_button.pressed.connect(toggle_pause)
 	add_child(pause_button)
@@ -252,15 +248,16 @@ func create_menu() -> void:
 func create_pause_menu() -> void:
 	pause_panel = PanelContainer.new()
 	pause_panel.name = "PauseMenu"
-	pause_panel.custom_minimum_size = Vector2(300, 320)
+	pause_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_panel.custom_minimum_size = Vector2(300, 360)
 	pause_panel.anchor_left = 0.5
 	pause_panel.anchor_top = 0.5
 	pause_panel.anchor_right = 0.5
 	pause_panel.anchor_bottom = 0.5
 	pause_panel.offset_left = -150
-	pause_panel.offset_top = -160
+	pause_panel.offset_top = -180
 	pause_panel.offset_right = 150
-	pause_panel.offset_bottom = 160
+	pause_panel.offset_bottom = 180
 	pause_panel.z_index = 20
 
 	var panel_style := StyleBoxFlat.new()
@@ -277,6 +274,7 @@ func create_pause_menu() -> void:
 	add_child(pause_panel)
 
 	var margin := MarginContainer.new()
+	margin.process_mode = Node.PROCESS_MODE_ALWAYS
 	margin.add_theme_constant_override("margin_left", 24)
 	margin.add_theme_constant_override("margin_right", 24)
 	margin.add_theme_constant_override("margin_top", 24)
@@ -284,10 +282,12 @@ func create_pause_menu() -> void:
 	pause_panel.add_child(margin)
 
 	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 14)
+	vbox.process_mode = Node.PROCESS_MODE_ALWAYS
+	vbox.add_theme_constant_override("separation", 12)
 	margin.add_child(vbox)
 
 	var title := Label.new()
+	title.process_mode = Node.PROCESS_MODE_ALWAYS
 	title.text = "PAUSED"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 20)
@@ -295,14 +295,25 @@ func create_pause_menu() -> void:
 	vbox.add_child(title)
 
 	var sep := Control.new()
-	sep.custom_minimum_size = Vector2(0, 8)
+	sep.process_mode = Node.PROCESS_MODE_ALWAYS
+	sep.custom_minimum_size = Vector2(0, 4)
 	vbox.add_child(sep)
 
 	resume_button = create_scifi_button("RESUME", Color(0.0, 0.9, 1.0))
+	resume_button.process_mode = Node.PROCESS_MODE_ALWAYS
 	resume_button.pressed.connect(toggle_pause)
 	vbox.add_child(resume_button)
 
+	restart_button = create_scifi_button("RESTART", Color(0.3, 1.0, 0.6))
+	restart_button.process_mode = Node.PROCESS_MODE_ALWAYS
+	restart_button.pressed.connect(func():
+		toggle_pause()
+		start_match(game_mode)
+	)
+	vbox.add_child(restart_button)
+
 	pause_menu_button = create_scifi_button("MAIN MENU", Color(0.7, 0.8, 1.0))
+	pause_menu_button.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_menu_button.pressed.connect(func():
 		toggle_pause()
 		show_main_menu()
@@ -310,6 +321,7 @@ func create_pause_menu() -> void:
 	vbox.add_child(pause_menu_button)
 
 	pause_quit_button = create_scifi_button("ABORT MISSION", Color(1.0, 0.3, 0.4))
+	pause_quit_button.process_mode = Node.PROCESS_MODE_ALWAYS
 	pause_quit_button.pressed.connect(quit_game)
 	vbox.add_child(pause_quit_button)
 
@@ -319,7 +331,6 @@ func toggle_pause() -> void:
 		return
 
 	is_paused = not is_paused
-	get_tree().paused = is_paused
 
 	if is_paused:
 		pause_panel.show()
@@ -327,6 +338,8 @@ func toggle_pause() -> void:
 	else:
 		pause_panel.hide()
 		status_label.show()
+		# When unpausing, re-trigger the current round state safely from scratch
+		start_round_from_current_state()
 
 
 func show_ai_menu() -> void:
@@ -407,6 +420,9 @@ func _input(event: InputEvent) -> void:
 	if state == GameState.MENU or state == GameState.MATCH_OVER:
 		return
 
+	if pause_button.visible and pause_button.get_global_rect().has_point(event.position):
+		return
+
 	if game_mode != GameMode.PVP and pos.y < size.y / 2.0:
 		return
 
@@ -420,6 +436,8 @@ func start_match(mode: GameMode) -> void:
 	reactions = [-1, -1]
 	last_reactions = [-1, -1]
 	state = GameState.READY
+	is_paused = false
+	pause_panel.hide()
 
 	menu_panel.hide()
 	if credit_label:
@@ -449,6 +467,10 @@ func start_round() -> void:
 	await get_tree().create_timer(1.5).timeout
 	if this_round != round_id:
 		return
+	while is_paused:
+		await get_tree().create_timer(0.1).timeout
+		if this_round != round_id:
+			return
 
 	state = GameState.WAITING
 	status_label.text = "STEADY"
@@ -458,11 +480,19 @@ func start_round() -> void:
 	await get_tree().create_timer(1.0).timeout
 	if this_round != round_id:
 		return
+	while is_paused:
+		await get_tree().create_timer(0.1).timeout
+		if this_round != round_id:
+			return
 
 	var random_wait := randf_range(1.5, 4.0)
 	await get_tree().create_timer(random_wait).timeout
 	if this_round != round_id:
 		return
+	while is_paused:
+		await get_tree().create_timer(0.1).timeout
+		if this_round != round_id:
+			return
 
 	state = GameState.SHOOT
 	shoot_time = Time.get_ticks_msec()
@@ -472,6 +502,20 @@ func start_round() -> void:
 
 	if game_mode != GameMode.PVP:
 		trigger_ai_reaction(this_round)
+
+
+func start_round_from_current_state() -> void:
+	# Resets the label and phase visuals based on where we paused
+	match state:
+		GameState.READY:
+			status_label.text = "READY"
+			set_background_phase("READY")
+		GameState.WAITING:
+			status_label.text = "STEADY"
+			set_background_phase("STEADY")
+		GameState.SHOOT:
+			status_label.text = "DRAW!"
+			set_background_phase("SHOOT")
 
 
 func trigger_ai_reaction(target_round: int) -> void:
@@ -487,6 +531,9 @@ func trigger_ai_reaction(target_round: int) -> void:
 	ai_timer = get_tree().create_timer(delay)
 	await ai_timer.timeout
 
+	while is_paused:
+		await get_tree().create_timer(0.1).timeout
+
 	if target_round != round_id or state != GameState.SHOOT:
 		return
 	if reactions[1] != -1:
@@ -496,7 +543,7 @@ func trigger_ai_reaction(target_round: int) -> void:
 
 
 func handle_tap(pos: Vector2) -> void:
-	if state == GameState.ROUND_OVER or state == GameState.MATCH_OVER:
+	if is_paused or state == GameState.ROUND_OVER or state == GameState.MATCH_OVER:
 		return
 
 	var player := 0 if pos.y >= size.y / 2.0 else 1
@@ -549,6 +596,10 @@ func finish_round(winner: int, message: String) -> void:
 	await get_tree().create_timer(3.0).timeout
 	if this_round != round_id:
 		return
+	while is_paused:
+		await get_tree().create_timer(0.1).timeout
+		if this_round != round_id:
+			return
 
 	if scores[0] >= TARGET_WINS or scores[1] >= TARGET_WINS:
 		var match_winner := 0 if scores[0] >= TARGET_WINS else 1
@@ -565,6 +616,10 @@ func finish_round(winner: int, message: String) -> void:
 		await get_tree().create_timer(1.5).timeout
 		if this_round != round_id:
 			return
+		while is_paused:
+			await get_tree().create_timer(0.1).timeout
+			if this_round != round_id:
+				return
 
 		show_match_over_menu()
 	else:
@@ -593,9 +648,7 @@ func show_match_over_menu() -> void:
 
 
 func show_main_menu() -> void:
-	if is_paused:
-		toggle_pause()
-
+	is_paused = false
 	round_id += 1
 	sound_manager.stop_hum()
 	state = GameState.MENU
@@ -621,6 +674,7 @@ func show_main_menu() -> void:
 
 
 func quit_game() -> void:
+	is_paused = false
 	get_tree().quit()
 
 
